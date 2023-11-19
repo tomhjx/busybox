@@ -4,3 +4,4 @@ alpine
 
 * curl
 * tcpdump
+* nmap
