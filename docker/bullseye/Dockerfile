@@ -1,34 +1,46 @@
-# 使用官方的 Node.js 镜像，带 Python 环境的基础镜像
-FROM node:16-bullseye
+# 使用基础镜像
+FROM debian:bullseye
 
-# 安装 Python 3.9 和必需的工具
-RUN apt-get update && apt-get install -y \
-    python3.9 \
-    python3.9-venv \
-    python3-pip \
+# 设置时区和环境变量
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+
+# 更新系统并安装必要的工具和依赖
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
     wget \
     gnupg \
+    software-properties-common \
+    apt-transport-https \
     ca-certificates \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    build-essential \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装 Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && node -v \
+    && npm -v
+
+# 安装 Python 3.9
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.9 \
+    python3.9-venv \
+    python3.9-dev \
+    python3-pip \
+    && python3.9 --version \
+    && pip3 --version
 
 # 安装 Chrome 浏览器
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /usr/share/keyrings/google-chrome.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y \
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' \
+    && apt-get update && apt-get install -y --no-install-recommends \
     google-chrome-stable \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-# 检查安装的 Node.js、Python 和 Chrome 版本
-RUN node -v && \
-    npm -v && \
-    python3.9 --version && \
-    google-chrome --version
+    && google-chrome --version
 
 # 设置工作目录
 WORKDIR /app
 
-
-# 默认命令（可根据实际情况调整）
+# 默认命令
 CMD ["bash"]
