@@ -4,6 +4,8 @@ services:
     image: registry.cn-guangzhou.aliyuncs.com/tomhjx/mirrorspro:tomhjx_busybox.playwright-python
     privileged: true
     restart: always
+    volumes:
+      - ./:/work
     command:
       - sleep
       - "10000000"
