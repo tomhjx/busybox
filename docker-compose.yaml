@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   busybox:
-    build: ./docker/alpine3.18
+    image: registry.cn-guangzhou.aliyuncs.com/tomhjx/mirrorspro:tomhjx_busybox.playwright-python
     privileged: true
     restart: always
     command:
