@@ -22,18 +22,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgtk-3-0 \
     libegl1-mesa \
     libopengl0 \
-    dbus \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装 Node.js（此处安装 Node.js 16.x LTS 版本，可以根据需要修改版本）
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs \
-    && node -v \
-    && npm -v
-
 # 安装 Playwright 及浏览器
 RUN pip install playwright && playwright install --with-deps
+
 
 # 设置容器启动时的默认命令
 CMD ["python", "app.py"]
